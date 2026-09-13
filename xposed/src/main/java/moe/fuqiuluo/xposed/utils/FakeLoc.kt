@@ -4,6 +4,7 @@ import android.location.Location
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -91,7 +92,7 @@ object FakeLoc {
     /**
      * 反定位复原加强（启用后将导致部分应用在关闭Portal后需要重新启动才能重新获取定位）
      */
-    var loopBroadcastLocation = false
+    var loopBroadcastLocation = true
 
     /**
      * 上一次的位置
@@ -144,7 +145,7 @@ object FakeLoc {
         val earthRadius = 6371000.0
         val radiusInDegrees = n / 15 / earthRadius * (180 / PI)
 
-        val jitterAngle = if (Random.nextBoolean()) angle + 45 else angle - 45
+        val jitterAngle = Random.nextDouble(0.0, 360.0)
 
         val newLat = lat + radiusInDegrees * cos(Math.toRadians(jitterAngle))
         val newLon = lon + radiusInDegrees * sin(Math.toRadians(jitterAngle)) / cos(Math.toRadians(lat))
@@ -154,7 +155,12 @@ object FakeLoc {
 
     fun moveLocation(lat: Double = latitude, lon: Double = longitude, n: Double, angle: Double = bearing): Pair<Double, Double> {
         val earthRadius = 6371000.0
-        val radiusInDegrees = Random.nextDouble(n, n + 1.2) / earthRadius * (180 / PI)
+        // 在当前速度基础上按正态分布上下浮动 20%（Box-Muller 生成标准正态分布）
+        val u1 = Random.nextDouble(0.0001, 1.0)
+        val u2 = Random.nextDouble(0.0, 1.0)
+        val gaussian = sqrt(-2.0 * ln(u1)) * cos(2.0 * PI * u2)
+        val fluctuation = (gaussian * 0.2).coerceIn(-0.2, 0.2)
+        val radiusInDegrees = n * (1.0 + fluctuation) / earthRadius * (180 / PI)
         val newLat = lat + radiusInDegrees * cos(Math.toRadians(angle))
         val newLon = lon + radiusInDegrees * sin(Math.toRadians(angle)) / cos(Math.toRadians(lat))
         return Pair(newLat, newLon)

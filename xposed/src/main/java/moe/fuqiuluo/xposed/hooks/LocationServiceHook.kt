@@ -3,6 +3,7 @@
 
 package moe.fuqiuluo.xposed.hooks
 
+import android.app.PendingIntent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.os.DeadObjectException
 import android.os.IBinder
 import android.os.IInterface
 import android.os.Parcel
+import android.os.SystemClock
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -275,8 +277,14 @@ internal object LocationServiceHook: BaseLocationHook() {
                 XposedHelpers.callMethod(args[0], "getProvider") as? String
             }.getOrNull() ?: "gps"
 
-            val listener = args.filterIsInstance<IInterface>().firstOrNull() ?: run {
-                Logger.error("requestLocationUpdates: listener is null: $method")
+            val listener = args.filterIsInstance<IInterface>().firstOrNull()
+            if (listener == null) {
+                if (FakeLoc.enable && args.any { it is PendingIntent }) {
+                    // PendingIntent 通道无法注入虚拟位置，模拟期间直接拦截，防止真实定位泄漏
+                    result = null
+                } else {
+                    Logger.error("requestLocationUpdates: listener is null: $method")
+                }
                 return@beforeHook
             }
 
@@ -324,8 +332,14 @@ internal object LocationServiceHook: BaseLocationHook() {
             } else {
                 args[0] as? String
             } ?: "gps"
-            val listener = args.filterIsInstance<IInterface>().firstOrNull() ?: run {
-                Logger.error("registerLocationListener: listener is null: $method")
+            val listener = args.filterIsInstance<IInterface>().firstOrNull()
+            if (listener == null) {
+                if (FakeLoc.enable && args.any { it is PendingIntent }) {
+                    // PendingIntent 通道无法注入虚拟位置，模拟期间直接拦截，防止真实定位泄漏
+                    result = null
+                } else {
+                    Logger.error("registerLocationListener: listener is null: $method")
+                }
                 return@beforeHook
             }
 
@@ -335,7 +349,7 @@ internal object LocationServiceHook: BaseLocationHook() {
 
             addLocationListenerInner(provider, listener)
 
-            if (FakeLoc.disableRegisterLocationListener) {
+            if (FakeLoc.disableRegisterLocationListener || FakeLoc.enable) {
                 result = null
                 return@beforeHook
             }
@@ -922,6 +936,9 @@ internal object LocationServiceHook: BaseLocationHook() {
                 }
             }
             location = injectLocation(location)
+            // 周期推送的位置必须携带新鲜时间戳，否则会被目标 SDK 判为陈旧定位而丢弃
+            location.time = System.currentTimeMillis()
+            location.elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
             var called = false
             var error: Throwable? = null
             kotlin.runCatching {

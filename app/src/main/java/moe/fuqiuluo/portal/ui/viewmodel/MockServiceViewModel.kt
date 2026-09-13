@@ -53,15 +53,15 @@ class MockServiceViewModel : ViewModel() {
 
         if (!::rockerJob.isInitialized || rockerJob.isCancelled) {
             rockerCoroutineController.pause()
-            val delayTime = activity.reportDuration.toLong()
             val applicationContext = activity.applicationContext
             rockerJob = GlobalScope.launch {
                 do {
                     rockerCoroutineController.controlledCoroutine()
+                    val delayTime = applicationContext.reportDuration.toLong().coerceAtLeast(1L)
                     delay(delayTime)
 
                     CrashReport.setUserSceneTag(applicationContext, 261773)
-                    if(!MockServiceHelper.move(locationManager!!, FakeLoc.speed / (1000 / delayTime) / 0.85, FakeLoc.bearing)) {
+                    if(!MockServiceHelper.move(locationManager!!, applicationContext.speed * delayTime / 1000.0, FakeLoc.bearing)) {
                         Log.e("MockServiceViewModel", "Failed to move")
                     }
 
@@ -80,10 +80,11 @@ class MockServiceViewModel : ViewModel() {
 
         if (!::routeMockJob.isInitialized || routeMockJob.isCancelled) {
             routeMockCoroutine.pause()
-            val delayTime = activity.reportDuration.toLong()
+            val applicationContext = activity.applicationContext
             routeMockJob = GlobalScope.launch {
                 do {
                     routeMockCoroutine.routeMockCoroutine()
+                    val delayTime = applicationContext.reportDuration.toLong().coerceAtLeast(1L)
                     delay(delayTime)
                     // 如果是第0阶段，定位到第一个点
                     if (routeStage == 0) {
@@ -118,7 +119,7 @@ class MockServiceViewModel : ViewModel() {
                                 target.second
                             )
                             routeStage++
-                        } else if (inverse.s12 < FakeLoc.speed / (1000 / delayTime) / 0.85) {
+                        } else if (inverse.s12 < applicationContext.speed * delayTime / 1000.0) {
                             // 如果距离小于速度，直接移动到目标点
                             MockServiceHelper.setLocation(
                                 locationManager!!,
@@ -161,7 +162,7 @@ class MockServiceViewModel : ViewModel() {
                     Log.d("MockServiceViewModel", "从 $currentLat, $currentLon 移动到 ${target.first}, ${target.second}, 方位角: $azimuth")
                     if (!MockServiceHelper.move(
                             locationManager!!,
-                            FakeLoc.speed / (1000 / delayTime) / 0.85,
+                            applicationContext.speed * delayTime / 1000.0,
                             azimuth
                         )
                     ) {

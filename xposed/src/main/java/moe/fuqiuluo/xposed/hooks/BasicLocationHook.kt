@@ -70,9 +70,9 @@ object BasicLocationHook: BaseLocationHook() {
                     location.isMock = false
                 }
                 location.altitude = FakeLoc.altitude
-                location.speed = originLocation.speed
+                location.speed = FakeLoc.speed.toFloat()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    location.speedAccuracyMetersPerSecond = 0F
+                    location.speedAccuracyMetersPerSecond = 1.0F
                 }
 
                 location.time = originLocation.time

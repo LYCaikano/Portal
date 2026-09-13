@@ -26,7 +26,9 @@ class CoroutineController {
     }
 
     fun pause() {
-        controlChannel.trySend(ControlCommand.Pause)
+        if (!isPaused) {
+            controlChannel.trySend(ControlCommand.Pause)
+        }
     }
 
     fun resume() {
