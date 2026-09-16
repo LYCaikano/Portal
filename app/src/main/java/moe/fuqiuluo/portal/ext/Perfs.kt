@@ -72,6 +72,33 @@ var Context.reportDuration: Int
         putInt("reportDuration", value)
     }
 
+/**
+ * 沿路线移动时位置的随机偏移范围（单位：厘米），经纬度各自在 [-value, +value] 内随机取值，0 表示不偏移
+ */
+var Context.routeRandomOffset: Int
+    get() = sharedPrefs.getInt("routeRandomOffset", 0)
+    set(value) = sharedPrefs.edit {
+        putInt("routeRandomOffset", value)
+    }
+
+/**
+ * 路线模拟的初始速度（米/秒），默认跟随全局速度设置
+ */
+var Context.routeStartSpeed: Double
+    get() = sharedPrefs.getFloat("routeStartSpeed", speed.toFloat()).toDouble()
+    set(value) = sharedPrefs.edit {
+        putFloat("routeStartSpeed", value.toFloat())
+    }
+
+/**
+ * 路线模拟的末速度（米/秒），移动过程中从初始速度梯度递减到该值，默认跟随全局速度设置
+ */
+var Context.routeEndSpeed: Double
+    get() = sharedPrefs.getFloat("routeEndSpeed", speed.toFloat()).toDouble()
+    set(value) = sharedPrefs.edit {
+        putFloat("routeEndSpeed", value.toFloat())
+    }
+
 var Context.minSatelliteCount: Int
     get() = sharedPrefs.getInt("minSatelliteCount", 12)
     set(value) = sharedPrefs.edit {

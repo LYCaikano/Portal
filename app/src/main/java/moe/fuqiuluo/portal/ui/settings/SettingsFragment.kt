@@ -31,6 +31,9 @@ import moe.fuqiuluo.portal.ext.minSatelliteCount
 import moe.fuqiuluo.portal.ext.needDowngradeToCdma
 import moe.fuqiuluo.portal.ext.needOpenSELinux
 import moe.fuqiuluo.portal.ext.reportDuration
+import moe.fuqiuluo.portal.ext.routeEndSpeed
+import moe.fuqiuluo.portal.ext.routeRandomOffset
+import moe.fuqiuluo.portal.ext.routeStartSpeed
 import moe.fuqiuluo.portal.ext.speed
 import moe.fuqiuluo.portal.service.MockServiceHelper
 import moe.fuqiuluo.portal.ui.viewmodel.MockServiceViewModel
@@ -70,6 +73,9 @@ class SettingsFragment : Fragment() {
         binding.altitudeValue.text = "%.2f米".format(context.altitude)
         binding.speedValue.text = "%.2f米/秒".format(context.speed)
         binding.accuracyValue.text = "%.2f米".format(context.accuracy)
+        binding.routeStartSpeedValue.text = "%.2f米/秒".format(context.routeStartSpeed)
+        binding.routeEndSpeedValue.text = "%.2f米/秒".format(context.routeEndSpeed)
+        binding.routeRandomOffsetValue.text = "%d厘米".format(context.routeRandomOffset)
         binding.reportDurationValue.text = "%dms".format(context.reportDuration)
         binding.satelliteCountValue.text = "%d颗".format(context.minSatelliteCount)
 
@@ -115,6 +121,58 @@ class SettingsFragment : Fragment() {
                 }
                 context.accuracy = value
                 binding.accuracyValue.text = "%.2f米".format(value)
+            }
+        }
+
+        binding.routeStartSpeedLayout.setOnClickListener {
+            showDialog("设置路线初始速度", binding.routeStartSpeedValue.text.toString().let {
+                it.substring(0, it.length - 3)
+            }) {
+                val value = it.toDoubleOrNull()
+                if (value == null || value <= 0.0) {
+                    showToast("速度不合法")
+                    return@showDialog
+                } else if (value > 100) {
+                    showToast("速度不能超过100米/秒")
+                    return@showDialog
+                }
+                context.routeStartSpeed = value
+                binding.routeStartSpeedValue.text = "%.2f米/秒".format(value)
+            }
+        }
+
+        binding.routeEndSpeedLayout.setOnClickListener {
+            showDialog("设置路线末速度", binding.routeEndSpeedValue.text.toString().let {
+                it.substring(0, it.length - 3)
+            }) {
+                val value = it.toDoubleOrNull()
+                if (value == null || value <= 0.0) {
+                    showToast("速度不合法")
+                    return@showDialog
+                } else if (value > 100) {
+                    showToast("速度不能超过100米/秒")
+                    return@showDialog
+                }
+                context.routeEndSpeed = value
+                binding.routeEndSpeedValue.text = "%.2f米/秒".format(value)
+            }
+        }
+
+        binding.routeRandomOffsetLayout.setOnClickListener {
+            showDialog("设置路线随机偏移", binding.routeRandomOffsetValue.text.toString().let {
+                it.substring(0, it.length - 2)
+            }) {
+                val value = it.toIntOrNull()
+                if (value == null || value < 0) {
+                    showToast("随机偏移不合法")
+                    return@showDialog
+                } else if (value > 10000) {
+                    showToast("随机偏移不能超过10000厘米")
+                    return@showDialog
+                }
+                context.routeRandomOffset = value
+                binding.routeRandomOffsetValue.text = "%d厘米".format(value)
+                showToast("沿路线移动时实时生效")
             }
         }
 

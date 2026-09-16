@@ -1,20 +1,20 @@
 <resources>
     <string name="app_name">Portal</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">打开导航侧栏</string>
+    <string name="navigation_drawer_close">关闭导航侧栏</string>
     <string name="nav_header_title">Portal</string>
     <string name="nav_header_subtitle">仅提供学习与交流，请3小时内删除</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="nav_header_desc">导航栏头部</string>
+    <string name="action_settings">设置</string>
     <string name="action_search">搜索</string>
     <string name="action_info">信息</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_mock">Location Mock</string>
-    <string name="menu_route_mock">Route Mock</string>
-    <string name="menu_gnss_mock">Gnss Mock</string>
-    <string name="menu_route_mock_edit">Route Mock Edit</string>
-    <string name="menu_setting">Setting</string>
+    <string name="menu_home">主页</string>
+    <string name="menu_mock">位置模拟</string>
+    <string name="menu_route_mock">路线模拟</string>
+    <string name="menu_gnss_mock">卫星模拟</string>
+    <string name="menu_route_mock_edit">编辑路线</string>
+    <string name="menu_setting">设置</string>
     <string name="request_permission">能否给我一个权限呢？</string>
     <string name="follow_location">镜头跟随</string>
     <string name="add_route">创建路线</string>
@@ -47,29 +47,44 @@
     <string name="selinux">SELinux</string>
     <string name="need_open_selinux">是否开启SELinux</string>
     <string name="altitude">定位海拔</string>
-    <string name="altitude_desc">模拟定位的海拔高度</string>
-    <string name="rocker_speed_desc">模拟移动的移动速度</string>
+    <string name="altitude_desc">模拟定位的海拔高度（摇杆/路线/卫星模拟共用）</string>
+    <string name="rocker_speed_desc">摇杆模式的移动速度（路线模拟请使用初始/末速度）</string>
     <string name="accuracy">定位精度</string>
-    <string name="accuracy_desc">模拟定位抖动的范围</string>
+    <string name="accuracy_desc">上报的定位精度，同时影响位置抖动幅度（各模拟模块共用）</string>
     <string name="debug">调试模式</string>
-    <string name="debug_desc">是否打印调试日志</string>
+    <string name="debug_desc">是否打印调试日志（全局共用）</string>
     <string name="dgc">允许获取当前位置（新）</string>
-    <string name="dgc_desc">是否允许调用GetCurrentLocation</string>
+    <string name="dgc_desc">是否允许调用GetCurrentLocation（Hook相关，全局生效）</string>
     <string name="rll">允许注册位置监听器</string>
-    <string name="rll_desc">是否允许应用注册位置监听器</string>
+    <string name="rll_desc">是否允许应用注册位置监听器（Hook相关，全局生效）</string>
     <string name="dfused">禁用融合定位</string>
-    <string name="dfused_desc">是否禁用融合定位</string>
+    <string name="dfused_desc">是否禁用融合定位（Hook相关，全局生效）</string>
     <string name="cdma">网络降级</string>
-    <string name="cdma_desc">将网络降级为CDMA</string>
+    <string name="cdma_desc">将网络降级为CDMA（Hook相关，全局生效）</string>
     <string name="hook_sensor">传感器劫持</string>
     <string name="hook_sensor_desc">模拟步频（待完善）</string>
     <string name="show_route">显示路线</string>
     <string name="item_report_duration_title">位置上报间隔</string>
-    <string name="item_report_duration_desc">上报位置的频率单位毫秒(ms)</string>
+    <string name="item_report_duration_desc">上报位置的频率，单位毫秒（摇杆与路线模拟共用）</string>
     <string name="item_report_duration_value">100ms</string>
-    <string name="gnss_mock">Gnss Mock</string>
+    <string name="gnss_mock">卫星模拟</string>
     <string name="satellites_info">星图信息</string>
     <string name="zero">0 G</string>
     <string name="in_view_left_item">可用卫星数量</string>
     <string name="in_use_satellite">在用卫星数量</string>
+
+    <!-- 设置页分区标题 -->
+    <string name="settings_section_general">通用设置</string>
+    <string name="settings_section_rocker">摇杆模拟</string>
+    <string name="settings_section_route">路线模拟</string>
+    <string name="settings_section_gnss">卫星模拟（GNSS）</string>
+    <string name="settings_section_hook">兼容与反检测（Hook）</string>
+
+    <!-- 路线模拟设置 -->
+    <string name="route_random_offset_title">路线随机偏移</string>
+    <string name="route_random_offset_desc">沿路线移动时位置的随机偏移范围（厘米），0为关闭（仅路线模拟）</string>
+    <string name="route_start_speed_title">路线初始速度</string>
+    <string name="route_start_speed_desc">路线模拟开始时的移动速度（米/秒，仅路线模拟）</string>
+    <string name="route_end_speed_title">路线末速度</string>
+    <string name="route_end_speed_desc">路线模拟结束时的速度，沿途随机梯度递减（米/秒，仅路线模拟）</string>
 </resources>

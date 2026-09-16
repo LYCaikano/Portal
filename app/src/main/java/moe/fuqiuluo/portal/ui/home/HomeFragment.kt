@@ -50,7 +50,6 @@ import moe.fuqiuluo.portal.ext.wgs84
 import moe.fuqiuluo.portal.ui.viewmodel.BaiduMapViewModel
 import moe.fuqiuluo.portal.ui.viewmodel.HomeViewModel
 import java.math.BigDecimal
-import java.util.List
 import kotlin.random.Random
 
 class HomeFragment : Fragment() {
@@ -319,7 +318,7 @@ class HomeFragment : Fragment() {
                 PolylineOptions()
                     .color(Color.argb(178, 0, 78, 255))
                     .width(10)
-                    .points(List.of<LatLng>(points[i].gcj02, points[i + 1].gcj02))
+                    .points(listOf(points[i].gcj02, points[i + 1].gcj02))
             )
         }
     }

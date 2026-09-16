@@ -145,7 +145,9 @@ object FakeLoc {
         val earthRadius = 6371000.0
         val radiusInDegrees = n / 15 / earthRadius * (180 / PI)
 
-        val jitterAngle = Random.nextDouble(0.0, 360.0)
+        // 抖动方向限制在移动方向 ±40° 范围内，模拟真实行走的微小前向偏移，
+        // 避免全方向随机导致的位置反向跳变（抽搐）
+        val jitterAngle = angle + Random.nextDouble(-40.0, 40.0)
 
         val newLat = lat + radiusInDegrees * cos(Math.toRadians(jitterAngle))
         val newLon = lon + radiusInDegrees * sin(Math.toRadians(jitterAngle)) / cos(Math.toRadians(lat))
